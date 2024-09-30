@@ -1,22 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    reactStrictMode: true,
-    images: {
-      domains: ['localhost'],
-    },
-  webpack: (config) => {
-    // react-beautiful-dnd のワーニングを抑制するための設定
-    config.module.rules.push({
-      test: /\.js$/,
-      include: [
-        /node_modules\/react-beautiful-dnd/,
-        /node_modules\/gif\.js/
-      ],
-      use: ['worker-loader'],
-    });
-  
+  reactStrictMode: true,
+  images: {
+    domains: ['localhost'],
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
     return config;
-    },
-  };
-  
-  export default nextConfig;
+  },
+};
+
+export default nextConfig;

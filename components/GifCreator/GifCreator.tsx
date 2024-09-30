@@ -69,12 +69,28 @@ export const GifCreator: React.FC = () => {
     abortControllerRef.current = new AbortController();
 
     try {
-      const gif = await createGif(
+    let gif;
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV === 'production') {
+      // 本番環境ではAPIルートを使用
+      const response = await fetch('/api/createGif', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ images }),
+      });
+      const data = await response.json();
+      gif = data.gif;
+    } else {
+      // 開発環境ではクライアントサイドで作成
+      gif = await createGif(
         images,
         (percent) => setProgress(percent),
         { width: 500, height: 500, quality: 10 },
         abortControllerRef.current.signal
       );
+    }
+
       const url = URL.createObjectURL(gif);
       setPreviewUrl(url);
 

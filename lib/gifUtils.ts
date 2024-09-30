@@ -74,7 +74,7 @@ export async function createGif(
     width = 500,
     height = 500,
     quality = 10,
-    workerScript = '/gif.worker.js' // ここでワーカーのパスを指定
+    workerScript = typeof window !== 'undefined' ? '/gif.worker.js' : undefined
   } = options;
 
   const gif = new GIF({
